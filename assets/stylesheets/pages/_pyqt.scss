@@ -1,0 +1,13 @@
+._pyqt {
+  padding-left: 1rem;
+
+  > h1, > h2, > h3, > hr { margin-left: -1rem; }
+
+  > h2, > h3 { @extend %block-heading; }
+
+  > h3.fn {
+    font-size: 1em;
+    font-weight: normal;
+    @extend %block-label, %label-blue;
+  }
+}
