@@ -1,0 +1,10 @@
+._qgispyapi {
+  padding-left: 1rem;
+
+  > h1, > h2 { margin-left: -1rem; }
+
+  h2 {
+    font-size: 1em;
+    @extend %block-heading;
+  }
+}
