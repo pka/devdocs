@@ -4,6 +4,9 @@ module Docs
       def call
         extract_module
 
+        css('title').remove
+        css('hr').remove
+
         # Remove module, etc. from h1
         css('h1').each do |node|
           h1 = Nokogiri::XML::Node.new 'h1', doc

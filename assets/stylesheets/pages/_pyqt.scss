@@ -7,7 +7,6 @@
 
   > h3.fn {
     font-size: 1em;
-    font-weight: normal;
     @extend %block-label, %label-blue;
   }
 }
