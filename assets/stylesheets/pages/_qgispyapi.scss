@@ -5,6 +5,6 @@
 
   h2 {
     font-size: 1em;
-    @extend %block-heading;
+    @extend %block-label, %label-blue;
   }
 }
