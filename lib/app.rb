@@ -48,7 +48,7 @@ class App < Sinatra::Application
 
   configure :production do
     set :static, false
-    set :docs_host, 'http://docs.devdocs.io'
+    set :docs_host, 'http://geoapis.sourcepole.com'
 
     use Rack::ConditionalGet
     use Rack::ETag
@@ -67,7 +67,7 @@ class App < Sinatra::Application
 
     Sprockets::Helpers.configure do |config|
       config.digest = true
-      config.asset_host = 'maxcdn.devdocs.io'
+      config.asset_host = 'geoapis.sourcepole.com'
       config.manifest = Sprockets::Manifest.new(sprockets, assets_manifest_path)
     end
   end
