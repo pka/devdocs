@@ -52,8 +52,8 @@
   cursor: default;
   @extend ._booting:before, %user-select-none;
 }
-
-._splash-maxcdn {
+/*
+._splash-sourcepole {
   position: absolute;
   bottom: 1.25rem;
   left: 50%;
@@ -64,10 +64,10 @@
   text-align: center;
 
   &:hover { color: $linkColor; }
-  > ._maxcdn-logo-bw { opacity: .2; }
-  &:hover > ._maxcdn-logo-bw { opacity: .5; }
+  > ._sourcepole-logo-bw { opacity: .2; }
+  &:hover > ._sourcepole-logo-bw { opacity: .5; }
 }
-
+*/
 //
 // Intro
 //
@@ -103,7 +103,7 @@
 
 ._intro-link { cursor: pointer; }
 
-._intro-maxcdn {
+._intro-sourcepole {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
@@ -293,33 +293,34 @@
   vertical-align: text-top;
   margin-left: .25rem;
 }
-
-%maxcdn-logo {
+/*
+%sourcepole-logo {
   display: inline-block;
   vertical-align: top;
-  width: 6.25rem;
+  width: 8.25rem;
   margin-left: .375rem;
   overflow: hidden;
   text-indent: -20rem;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 6.25rem 1rem;
+  background-size: 8.25rem 1rem;
 }
 
-._maxcdn-logo {
-  background-image: image-url('maxcdn.png');
-  @extend %maxcdn-logo;
+._sourcepole-logo {
+  background-image: image-url('sourcepole.png');
+  @extend %sourcepole-logo;
 
   @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
-    background-image: image-url('maxcdn@2x.png');
+    background-image: image-url('sourcepole@2x.png');
   }
 }
 
-._maxcdn-logo-bw {
-  background-image: image-url('maxcdn-bw.png');
-  @extend %maxcdn-logo;
+._sourcepole-logo-bw {
+  background-image: image-url('sourcepole-bw.png');
+  @extend %sourcepole-logo;
 
   @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
-    background-image: image-url('maxcdn-bw@2x.png');
+    background-image: image-url('sourcepole-bw@2x.png');
   }
 }
+*/
