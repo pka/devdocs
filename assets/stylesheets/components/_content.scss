@@ -68,10 +68,26 @@
 //
 
 ._splash-title {
-  color: $splashText;
+  color: #ddd;
+  cursor: default;
   @extend %loading, %user-select-none;
 }
+/*
+._splash-sourcepole {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  width: 16rem;
+  margin-left: -8rem;
+  line-height: 1rem;
+  color: #bbb;
+  text-align: center;
 
+  &:hover { color: $linkColor; }
+  > ._sourcepole-logo-bw { opacity: .2; }
+  &:hover > ._sourcepole-logo-bw { opacity: .5; }
+}
+*/
 //
 // Intro
 //
@@ -117,6 +133,16 @@
 }
 
 ._intro-link { cursor: pointer; }
+
+._intro-sourcepole {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  margin: 0;
+  color: $textColorLight;
+
+  &:hover { color: $linkColor; }
+}
 
 //
 // Error
@@ -466,3 +492,35 @@
   vertical-align: text-top;
   margin-left: .25rem;
 }
+
+/*
+%sourcepole-logo {
+  display: inline-block;
+  vertical-align: top;
+  width: 8.25rem;
+  margin-left: .375rem;
+  overflow: hidden;
+  text-indent: -20rem;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 8.25rem 1rem;
+}
+
+._sourcepole-logo {
+  background-image: image-url('sourcepole.png');
+  @extend %sourcepole-logo;
+
+  @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+    background-image: image-url('sourcepole@2x.png');
+  }
+}
+
+._sourcepole-logo-bw {
+  background-image: image-url('sourcepole-bw.png');
+  @extend %sourcepole-logo;
+
+  @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+    background-image: image-url('sourcepole-bw@2x.png');
+  }
+}
+*/
