@@ -12,7 +12,7 @@ module Docs
       def additional_entries
         return [] if root_page?
         entries = []
-        css('h2').each do |node|
+        css('h3').each do |node|
           entries << [node['id'], node['id']]
         end
         entries
