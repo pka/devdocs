@@ -3,7 +3,9 @@
 
   > h1, > h2 { margin-left: -1rem; }
 
-  h2 {
+  > h2 { @extend %block-heading; }
+
+  h3 {
     font-size: 1em;
     @extend %block-label, %label-blue;
   }
