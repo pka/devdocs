@@ -5,7 +5,7 @@ module Docs
     self.type = 'qgispyapi'
     self.version = '2.0.1'
     self.dir = '/home/pi/code/gis/geoapis/docs/qgispyapi'
-    self.root_path = 'core.html'
+    self.root_path = 'classes.html'
 
     html_filters.push 'qgispyapi/entries'
     options[:fix_urls] = ->(url) do
