@@ -3,11 +3,11 @@ module Docs
     class EntriesFilter < Docs::EntriesFilter
 
       def get_name
-        entry = at_css('div[class="refentry"]')
+        entry = at_css('div.refentry')
         if entry
           entry['title']
         else
-          #We add h2 subchapters as content
+          #We add h2 subchapters as additional entries
           nil
         end
       end
@@ -24,10 +24,10 @@ module Docs
         return [] if root_page?
         entries = []
         if name.nil?
-          css('div[class="sect1"] h2').each do |title|
+          css('div.sect1 h2,h3').each do |title|
             chapter = title.content.sub(/^[\d.]+ /, '')
             unless chapter == 'Raster Processing'
-              entries << ['Content', title['id'], chapter]
+              entries << [chapter, title['id'], chapter]
             end
           end
         end

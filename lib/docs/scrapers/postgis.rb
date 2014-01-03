@@ -18,7 +18,6 @@ module Docs
       /ch06.html
       /performance_tips.html
       /RT_FAQ.html
-      /Extras.html
       /PostGIS_Special_Functions_Index.html
       /ch14.html
       /release_notes.html)
