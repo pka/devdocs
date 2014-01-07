@@ -72,7 +72,7 @@
   cursor: default;
   @extend %loading, %user-select-none;
 }
-/*
+
 ._splash-sourcepole {
   position: absolute;
   bottom: 1.25rem;
@@ -87,7 +87,7 @@
   > ._sourcepole-logo-bw { opacity: .2; }
   &:hover > ._sourcepole-logo-bw { opacity: .5; }
 }
-*/
+
 //
 // Intro
 //
@@ -493,17 +493,16 @@
   margin-left: .25rem;
 }
 
-/*
 %sourcepole-logo {
   display: inline-block;
   vertical-align: top;
-  width: 8.25rem;
-  margin-left: .375rem;
+  width: 9.25rem;
+  margin-left: .475rem;
   overflow: hidden;
   text-indent: -20rem;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 8.25rem 1rem;
+  background-size: 9.25rem 0.75rem;
 }
 
 ._sourcepole-logo {
@@ -523,4 +522,3 @@
     background-image: image-url('sourcepole-bw@2x.png');
   }
 }
-*/
