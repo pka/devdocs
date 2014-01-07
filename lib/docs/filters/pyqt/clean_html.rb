@@ -8,13 +8,17 @@ module Docs
         css('hr').remove
 
         # Remove module, etc. from h1
-        css('h1').each do |node|
+        if node = at_css('h1')
+          classname = node.content.split.first
           h1 = Nokogiri::XML::Node.new 'h1', doc
-          h1.content = node.content.split.first
+          h1.content = classname
           newnode = node.replace(h1)
-          pre = Nokogiri::XML::Node.new 'pre', doc
-          pre.content = "from PyQt4.#{result[:module]} import #{h1.content}"
-          newnode.add_next_sibling(pre)
+          inner_class = classname.include?('.')
+          unless inner_class
+            pre = Nokogiri::XML::Node.new 'pre', doc
+            pre.content = "from PyQt4.#{result[:module]} import #{classname}"
+            newnode.add_next_sibling(pre)
+          end
         end
 
         css('h2').each do |node|
