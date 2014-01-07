@@ -9,7 +9,7 @@ module Docs
 
     html_filters.push 'qgispyapi/entries'
     options[:fix_urls] = ->(url) do
-      pyqturl = url.sub(%r{^http://pyqt.sourceforge.net/Docs/PyQt4/(\w+).html}, '/pyqt/\1')
+      pyqturl = url.sub(%r{^http://pyqt.sourceforge.net/Docs/PyQt4/([\w-]+).html}, '/pyqt/\1')
       if pyqturl != url then pyqturl else nil end
     end
 
