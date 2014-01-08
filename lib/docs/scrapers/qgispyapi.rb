@@ -16,7 +16,6 @@ module Docs
     options[:skip] = []
 
     options[:attribution] = <<-HTML
-      Copyright &copy; ...<br>
       QGIS is released under the terms of the GNU General Public License.
     HTML
   end
