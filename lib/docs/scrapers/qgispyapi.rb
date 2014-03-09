@@ -3,7 +3,7 @@ module Docs
     self.name = 'QGIS Python API'
     self.slug = 'qgispyapi'
     self.type = 'qgispyapi'
-    self.version = '2.0.1'
+    self.version = '2.2'
     self.dir = '/home/pi/code/gis/geoapis/docs/qgispyapi'
     self.root_path = 'classes.html'
 

@@ -24,7 +24,10 @@ newsItem = (date, news) ->
   result
 
 app.news = [
-  [ 1386979200000, # December 14, 2013
+  [ 1394400402000, # March 9, 2014
+    """ Update <a href="/qgispyapi/">QGIS Python API</a> documentation to version 2.2 """
+  ], [
+    1386979200000, # December 14, 2013
     """ New <a href="/postgresql/">PostgreSQL</a> documentation """
   ], [
     1386892800000, # December 13, 2013
