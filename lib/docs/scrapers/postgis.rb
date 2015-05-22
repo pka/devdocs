@@ -2,7 +2,7 @@ module Docs
   class Postgis < FileScraper
     self.name = 'PostGIS'
     self.type = 'postgis'
-    self.version = '2.1.1'
+    self.version = '2.1.7'
     self.dir = '/home/builder/geoapis/docs/postgis'
     self.base_url = 'http://postgis.net/docs/manual-2.1'
     self.root_path = 'index.html'
