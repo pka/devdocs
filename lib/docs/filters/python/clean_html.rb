@@ -38,7 +38,7 @@ module Docs
           node.css('a').each do |link|
             link.before(link.children).remove
           end
-          node.child.content = node.child.content.sub @levelRegexp, ''
+          node.child.content = node.child.content.remove @levelRegexp
         end
 
         css('dt').each do |node|
@@ -51,7 +51,7 @@ module Docs
         end
 
         # Remove code highlighting
-        css('.highlight-python3').each do |node|
+        css('[class*="highlight-python"]').each do |node|
           pre = node.at_css('pre')
           pre.content = pre.content
           pre['class'] = 'python'

@@ -7,6 +7,7 @@ $LOAD_PATH.unshift 'lib'
 
 require 'minitest/autorun'
 require 'minitest/pride'
+require 'active_support'
 require 'active_support/core_ext'
 require 'active_support/testing/assertions'
 require 'rr'
@@ -14,6 +15,8 @@ require 'rr'
 Dir[File.dirname(__FILE__) + '/support/*.rb'].each do |file|
   autoload File.basename(file, '.rb').camelize, file
 end
+
+ActiveSupport::TestCase.test_order = :random
 
 class MiniTest::Spec
   include ActiveSupport::Testing::Assertions
@@ -39,6 +42,6 @@ def rm_tmp
   FileUtils.rm_rf $tmp_path if $tmp_path
 end
 
-MiniTest::Unit.after_tests do
+Minitest.after_run do
   rm_tmp
 end

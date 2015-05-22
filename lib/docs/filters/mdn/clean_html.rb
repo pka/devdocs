@@ -6,9 +6,6 @@ module Docs
         '.htab',             # "Browser compatibility" tabs
         '.breadcrumbs',      # (e.g. CSS/animation)
         '.Quick_links',      # (e.g. CSS/animation)
-        '.HTMLElmNav',       # (e.g. HTML/a)
-        '.htmlMinVerHeader', # (e.g. HTML/article)
-        '.geckoVersionNote', # (e.g. HTML/li)
         '.todo',
         '.draftHeader']
 
@@ -18,6 +15,12 @@ module Docs
         css('td.header').each do |node|
           node.name = 'th'
         end
+
+        css('nobr').each do |node|
+          node.before(node.children).remove
+        end
+
+        css('h2[style]', 'pre[style]', 'th[style]', 'div[style*="line-height"]').remove_attr('style')
 
         doc
       end

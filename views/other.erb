@@ -3,16 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="robots" content="noindex">
+  <% if doc_index_page? %><meta name="description" content="<%= @doc['name'] %> API documentation with instant search, offline mode, keyboard shortcuts, mobile version, and more."><% else %><meta name="robots" content="noindex"><% end %>
   <meta name="format-detection" content="telephone=no">
-  <title>GeoAPIs</title>
+  <meta property="og:image" content="http://geoapis.sourcepole.com/images/icon-128.png">
+  <title>GeoAPIs<%= "/#{@doc['name']}" if doc_index_page? %></title>
+  <link rel="canonical" href="http://geoapis.sourcepole.com<%= request.path %>">
   <link rel="icon" type="image/x-icon" href="http://geoapis.sourcepole.com/favicon.ico">
   <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Search GeoAPIs">
-  <%= stylesheet_tag 'application' %>
+  <link rel="stylesheet" href="<%= main_stylesheet_path %>" data-alt="<%= alternate_stylesheet_path %>">
   <%= javascript_tag 'application', asset_host: false %><% unless App.production? %>
   <%= javascript_tag 'debug' %><% end %>
   <script>app.DOC = <%= @doc.to_json %>;</script>
 </head>
-<body class="_booting">
+<body class="_booting _noscript">
+<noscript class="_fail">DevDocs requires JavaScript to run.</noscript>
 <%= erb :app %></body>
 </html>

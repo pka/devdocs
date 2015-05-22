@@ -2,6 +2,7 @@ class app.Shortcuts
   $.extend @prototype, Events
 
   constructor: ->
+    @isWindows = $.isWindows()
     @start()
 
   start: ->
@@ -34,7 +35,7 @@ class app.Shortcuts
     return
 
   handleKeydownEvent: (event) ->
-    if not event.target.form and 65 <= event.which <= 90
+    if not event.target.form and (48 <= event.which <= 57 or 65 <= event.which <= 90)
       @trigger 'typing'
       return
 
@@ -46,8 +47,9 @@ class app.Shortcuts
       when 27
         @trigger 'escape'
       when 32
-        @trigger 'pageDown'
-        false
+        if not @lastKeypress or @lastKeypress < Date.now() - 500
+          @trigger 'pageDown'
+          false
       when 33
         @trigger 'pageUp'
       when 34
@@ -72,14 +74,16 @@ class app.Shortcuts
       when 13
         @trigger 'superEnter'
       when 37
-        @trigger 'superLeft'
-        false
+        unless @isWindows
+          @trigger 'superLeft'
+          false
       when 38
         @trigger 'home'
         false
       when 39
-        @trigger 'superRight'
-        false
+        unless @isWindows
+          @trigger 'superRight'
+          false
       when 40
         @trigger 'end'
         false
@@ -95,14 +99,37 @@ class app.Shortcuts
 
   handleKeydownAltEvent: (event) ->
     switch event.which
+      when 9
+        @trigger 'altRight', event
+      when 37
+        if @isWindows
+          @trigger 'superLeft'
+          false
       when 38
         @trigger 'altUp'
         false
+      when 39
+        if @isWindows
+          @trigger 'superRight'
+          false
       when 40
         @trigger 'altDown'
+        false
+      when 70
+        @trigger 'altF', event
+      when 71
+        @trigger 'altG'
+        false
+      when 82
+        @trigger 'altR'
+        false
+      when 83
+        @trigger 'altS'
         false
 
   handleKeypressEvent: (event) ->
     if event.which is 63 and not event.target.value
       @trigger 'help'
       false
+    else
+      @lastKeypress = Date.now()

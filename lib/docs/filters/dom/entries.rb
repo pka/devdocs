@@ -5,54 +5,87 @@ module Docs
         'Battery Status'      => 'Battery Status',
         'Canvas '             => 'Canvas',
         'CSS Object Model'    => 'CSS',
+        'Cryptography'        => 'Web Cryptography',
         'Device Orientation'  => 'Device Orientation',
         'Encoding'            => 'Encoding',
+        'Encrypted Media Extensions' => 'Encrypted Media',
+        'Fetch'               => 'Fetch',
         'File API'            => 'File',
         'Geolocation'         => 'Geolocation',
+        'Geometry'            => 'Geometry',
         'Media Capture'       => 'Media',
         'Media Source'        => 'Media',
+        'MediaStream'         => 'Media',
         'Navigation Timing'   => 'Navigation Timing',
         'Network Information' => 'Network Information',
+        'Push API'            => 'Push',
+        'Service Workers'     => 'Service Workers',
+        'Web Animations'      => 'Animation',
         'Web Audio'           => 'Web Audio',
-        'Web Workers'         => 'Web Workers' }
+        'Web Messaging'       => 'Web Messaging',
+        'Web Storage'         => 'Web Storage',
+        'Web Workers'         => 'Web Workers',
+        'WebRTC'              => 'WebRTC',
+        'WebVR'               => 'WebVR' }
 
       TYPE_BY_NAME_STARTS_WITH = {
+        'Audio'               => 'Web Audio',
+        'Broadcast'           => 'Broadcast Channel',
         'Canvas'              => 'Canvas',
+        'CSS'                 => 'CSS',
         'ChildNode'           => 'Node',
         'console'             => 'Console',
-        'CSS'                 => 'CSS',
         'document'            => 'Document',
         'DocumentFragment'    => 'DocumentFragment',
         'DOM'                 => 'DOM',
         'element'             => 'Element',
         'event'               => 'Event',
         'Event'               => 'Event',
+        'Fetch'               => 'Fetch',
         'File'                => 'File',
         'GlobalEventHandlers' => 'GlobalEventHandlers',
         'history'             => 'History',
+        'HTML'                => 'Elements',
         'IDB'                 => 'IndexedDB',
-        'Location'            => 'Location',
+        'location'            => 'Location',
         'navigator'           => 'Navigator',
+        'MediaQuery'          => 'MediaQuery',
         'Node'                => 'Node',
         'Notification'        => 'Notification',
         'ParentNode'          => 'Node',
+        'Push'                => 'Push',
         'Range'               => 'Range',
+        'RTC'                 => 'WebRTC',
+        'screen'              => 'Screen',
         'Selection'           => 'Selection',
+        'Storage'             => 'Web Storage',
         'StyleSheet'          => 'CSS',
+        'Stylesheet'          => 'CSS',
         'SVG'                 => 'SVG',
         'Touch'               => 'Touch',
         'TreeWalker'          => 'TreeWalker',
         'Uint'                => 'Typed Arrays',
         'URL'                 => 'URL',
-        'window'              => 'window',
+        'window'              => 'Window',
+        'Window'              => 'Window',
         'XMLHttpRequest'      => 'XMLHTTPRequest' }
 
       TYPE_BY_NAME_INCLUDES = {
-        'WebGL'  => 'Canvas',
-        'Worker' => 'Web Workers' }
+        'ChildNode'     => 'Node',
+        'Crypto'        => 'Web Cryptography',
+        'ImageData'     => 'Canvas',
+        'IndexedDB'     => 'IndexedDB',
+        'MediaStream'   => 'Media',
+        'NodeList'      => 'Node',
+        'Path2D'        => 'Canvas',
+        'ServiceWorker' => 'Service Workers',
+        'TextMetrics'   => 'Canvas',
+        'udio'          => 'Web Audio',
+        'WebGL'         => 'Canvas',
+        'WebVR'         => 'WebVR',
+        'Worker'        => 'Web Workers' }
 
-      TYPE_BY_NAME_MATCHES = {
-        /HTML\w*Element/ => 'Elements' }
+      TYPE_BY_NAME_MATCHES = {}
 
       TYPE_BY_HAS_LINK_TO = {
         'DeviceOrientation specification' => 'Device Orientation',
@@ -62,10 +95,20 @@ module Docs
         'Web Audio API'                   => 'Web Audio',
         'XMLHTTPRequest'                  => 'XMLHTTPRequest' }
 
+      CLEANUP_NAMES = %w(
+        CSS\ Object\ Model.
+        Web\ Audio\ API.
+        IndexedDB\ API.
+        MediaRecorder\ API.
+        Tutorial.
+        XMLHttpRequest.)
+
       def get_name
         name = super
+        CLEANUP_NAMES.each { |str| name.remove!(str) }
         name.sub! 'Input.', 'HTMLInputElement.'
         name.sub! 'window.navigator', 'navigator'
+        name.sub! 'API.', 'API: '
         # Comment.Comment => Comment.constructor
         name.sub! %r{\A(\w+)\.\1\z}, '\1.constructor' unless name == 'window.window'
         name
@@ -103,10 +146,19 @@ module Docs
         end
       end
 
+      SKIP_CONTENT = [
+        'not on a standards track',
+        'removed from the Web',
+        'not on a current W3C standards track',
+        'This feature is not built into all browsers',
+        'not currently supported in any browser'
+      ]
+
       def include_default_entry?
-        !(node = doc.at_css '.overheadIndicator') ||
-        !node.content.include?('not on a standards track') &&
-        !node.content.include?('removed from the Web')
+        return true if type == 'Console'
+        return true unless node = doc.at_css('.overheadIndicator')
+        content = node.content
+        SKIP_CONTENT.none? { |str| content.include?(str) }
       end
     end
   end

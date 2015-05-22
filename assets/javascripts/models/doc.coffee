@@ -1,9 +1,10 @@
 class app.models.Doc extends app.Model
-  # Attributes: name, slug, type, version, index_path, mtime
+  # Attributes: name, slug, type, version, index_path, db_path, db_size, mtime, links
 
   constructor: ->
     super
     @reset @
+    @text = @name.toLowerCase()
 
   reset: (data) ->
     @resetEntries data.entries
@@ -25,12 +26,15 @@ class app.models.Doc extends app.Model
     "/#{@slug}#{path}"
 
   fileUrl: (path) ->
-    "#{app.config.docs_host}#{@fullPath(path)}"
+    "#{app.config.docs_host}#{@fullPath(path)}?#{@mtime}"
+
+  dbUrl: ->
+    "#{app.config.docs_host}/#{@db_path}?#{@mtime}"
 
   indexUrl: ->
-    "#{app.indexHost()}/#{@index_path}"
+    "#{app.indexHost()}/#{@index_path}?#{@mtime}"
 
-  indexEntry: ->
+  toEntry: ->
     new app.models.Entry
       doc: @
       name: @name
@@ -40,7 +44,7 @@ class app.models.Doc extends app.Model
     if hash and entry = @entries.findBy 'path', "#{path}##{hash}"
       entry
     else if path is 'index'
-      @indexEntry()
+      @toEntry()
     else
       @entries.findBy 'path', path
 
@@ -51,6 +55,7 @@ class app.models.Doc extends app.Model
       @reset data
       onSuccess()
       @_setCache data if options.writeCache
+      return
 
     ajax
       url: @indexUrl()
@@ -67,6 +72,7 @@ class app.models.Doc extends app.Model
     callback = =>
       @reset data
       onSuccess()
+      return
 
     setTimeout callback, 0
     true
@@ -83,3 +89,49 @@ class app.models.Doc extends app.Model
   _setCache: (data) ->
     app.store.set @slug, [@mtime, data]
     return
+
+  install: (onSuccess, onError) ->
+    return if @installing
+    @installing = true
+
+    error = =>
+      @installing = null
+      onError()
+      return
+
+    success = (data) =>
+      @installing = null
+      app.db.store @, data, onSuccess, error
+      return
+
+    ajax
+      url: @dbUrl()
+      success: success
+      error: error
+      timeout: 3600
+    return
+
+  uninstall: (onSuccess, onError) ->
+    return if @installing
+    @installing = true
+
+    success = =>
+      @installing = null
+      onSuccess()
+      return
+
+    error = =>
+      @installing = null
+      onError()
+      return
+
+    app.db.unstore @, success, error
+    return
+
+  getInstallStatus: (callback) ->
+    app.db.version @, (value) ->
+      callback installed: !!value, mtime: value
+    return
+
+  isOutdated: (status) ->
+    status.installed and @mtime isnt status.mtime

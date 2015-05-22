@@ -1,25 +1,17 @@
+#= require app/searcher
+
 class app.models.Entry extends app.Model
   # Attributes: name, type, path
 
-  SEPARATORS_REGEXP = /\:?\ |#|::/g
-  PARANTHESES_REGEXP = /\(.*?\)$/
-
   constructor: ->
     super
-    @text = @searchValue()
-
-  searchValue: ->
-    @name
-      .toLowerCase()
-      .replace('...', ' ')
-      .replace(' event', '')
-      .replace(SEPARATORS_REGEXP, '.')
-      .replace(/\.+/g, '.')
-      .replace(PARANTHESES_REGEXP, '')
-      .trim()
+    @text = app.Searcher.normalizeString(@name)
 
   fullPath: ->
     @doc.fullPath if @isIndex() then '' else @path
+
+  dbPath: ->
+    @path.replace /#.*/, ''
 
   filePath: ->
     @doc.fullPath @_filePath()
@@ -39,8 +31,4 @@ class app.models.Entry extends app.Model
     @doc.types.findBy 'name', @type
 
   loadFile: (onSuccess, onError) ->
-    ajax
-      url: @fileUrl()
-      dataType: 'html'
-      success: onSuccess
-      error: onError
+    app.db.load(@, onSuccess, onError)

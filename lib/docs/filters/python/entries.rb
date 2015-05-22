@@ -15,8 +15,11 @@ module Docs
 
       def get_name
         name = at_css('h1').content
-        name.sub! %r{\A[\d\.]+ }, ''    # remove list number
-        name.sub! %r{ \u{2014}.+\z}, '' # remove text after em dash
+        name.remove! %r{\A[\d\.]+ } # remove list number
+        name.remove! "\u{00B6}" # remove pilcrow sign
+        name.remove! %r{ [\u{2013}\u{2014}].+\z} # remove text after em/en dash
+        name.remove! 'Built-in'
+        name.strip!
         name
       end
 
@@ -27,24 +30,26 @@ module Docs
 
         if type == 'The Python Standard Library'
           type = at_css('h1').content
+        elsif type.include?('I/O') || %w(select selectors).include?(name)
+          type = 'Input/ouput'
         elsif type.start_with? '19'
           type = 'Internet Data Handling'
         end
 
-        type.sub! %r{\A\d+\.\s+}, '' # remove list number
-        type.sub! "\u{00b6}", ''     # remove paragraph character
+        type.remove! %r{\A\d+\.\s+} # remove list number
+        type.remove! "\u{00b6}" # remove paragraph character
         type.sub! ' and ', ' & '
-        [' Services', ' Modules', ' Specific', 'Python '].each { |str| type.sub! str, '' }
+        [' Services', ' Modules', ' Specific', 'Python '].each { |str| type.remove!(str) }
 
         REPLACE_TYPES[type] || type
       end
 
       def include_default_entry?
-        name !~ /[A-Z]/ && !skip? # skip non-module names
+        !at_css('.body > .section:only-child > .toctree-wrapper:last-child') && !type.in?(%w(Language Superseded))
       end
 
       def additional_entries
-        return [] if root_page? || skip? || name == 'errno'
+        return [] if root_page? || !include_default_entry? || name == 'errno'
         clean_id_attributes
         entries = []
 
@@ -65,14 +70,10 @@ module Docs
         entries
       end
 
-      def skip?
-        type == 'Language'
-      end
-
       def clean_id_attributes
         css('.section > .target[id]').each do |node|
           if dt = node.at_css('+ dl > dt')
-            dt['id'] ||= node['id'].sub(/\w+\-/, '')
+            dt['id'] ||= node['id'].remove(/\w+\-/)
           end
           node.remove
         end

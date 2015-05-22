@@ -26,9 +26,12 @@ class app.views.SearchScope extends app.View
   getScope: ->
     @doc or app
 
+  name: ->
+    @doc?.name
+
   search: (value) ->
     unless @doc
-      @searcher.find app.docs.all(), 'slug', value
+      @searcher.find app.docs.all(), 'text', value
     return
 
   searchUrl: ->
@@ -49,7 +52,7 @@ class app.views.SearchScope extends app.View
 
     @input.removeAttribute 'placeholder'
     @input.value = @input.value[@input.selectionStart..]
-    @input.style.paddingLeft = @tag.offsetWidth + 6 + 'px'
+    @input.style.paddingLeft = @tag.offsetWidth + 10 + 'px'
     $.trigger @input, 'input'
 
   reset: =>
@@ -76,9 +79,9 @@ class app.views.SearchScope extends app.View
 
   extractHashValue: ->
     if value = @getHashValue()
-      newHash = decodeURIComponent(location.hash).replace "##{SEARCH_PARAM}=#{value} ", "##{SEARCH_PARAM}="
+      newHash = $.urlDecode(location.hash).replace "##{SEARCH_PARAM}=#{value} ", "##{SEARCH_PARAM}="
       app.router.replaceHash(newHash)
       value
 
   getHashValue: ->
-    try (new RegExp "^##{SEARCH_PARAM}=(.+?) .").exec(decodeURIComponent location.hash)?[1] catch
+    try (new RegExp "^##{SEARCH_PARAM}=(.+?) .").exec($.urlDecode location.hash)?[1] catch

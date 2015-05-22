@@ -15,7 +15,8 @@ class app.views.Search extends app.View
 
   @shortcuts:
     typing: 'autoFocus'
-    escape: 'reset'
+    altG: 'google'
+    altS: 'stackoverflow'
 
   @routes:
     root: 'onRoot'
@@ -25,7 +26,9 @@ class app.views.Search extends app.View
     @addSubview @scope = new app.views.SearchScope @el
 
     @searcher = new app.Searcher
-    @searcher.on 'results', @onResults
+    @searcher
+      .on 'results', @onResults
+      .on 'end', @onEnd
 
     app.on 'ready', @onReady
     $.on window, 'hashchange', @searchUrl
@@ -40,7 +43,7 @@ class app.views.Search extends app.View
     @focus() unless $.isTouchScreen()
     return
 
-  reset: =>
+  reset: ->
     @el.reset()
     @onInput()
     @autoFocus()
@@ -66,6 +69,7 @@ class app.views.Search extends app.View
     @addClass @constructor.activeClass
     @trigger 'searching'
 
+    @hasResults = null
     @flags = urlSearch: url, initialResults: true
     @searcher.find @scope.getScope().entries.all(), 'text', @value
     return
@@ -83,9 +87,29 @@ class app.views.Search extends app.View
     @removeClass @constructor.activeClass
     @trigger 'clear'
 
+  externalSearch: (url) ->
+    if value = @value
+      value = "#{@scope.name()} #{value}" if @scope.name()
+      $.popup "#{url}#{encodeURIComponent value}"
+      @reset()
+    return
+
+  google: =>
+    @externalSearch "https://www.google.com/search?q="
+    return
+
+  stackoverflow: =>
+    @externalSearch "https://stackoverflow.com/search?q="
+    return
+
   onResults: (results) =>
+    @hasResults = true if results.length
     @trigger 'results', results, @flags
     @flags.initialResults = false
+    return
+
+  onEnd: =>
+    @trigger 'noresults' unless @hasResults
     return
 
   onClick: (event) =>
@@ -110,4 +134,4 @@ class app.views.Search extends app.View
       value
 
   getHashValue: ->
-    try (new RegExp "##{SEARCH_PARAM}=(.*)").exec(decodeURIComponent location.hash)?[1] catch
+    try (new RegExp "##{SEARCH_PARAM}=(.*)").exec($.urlDecode location.hash)?[1] catch

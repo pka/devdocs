@@ -13,14 +13,28 @@
 .token.property,
 .token.tag,
 .token.boolean,
-.token.number {
-  color: #905;
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  @if $style == 'dark' {
+    color: #eb8160;
+  } @else {
+    color: #905;
+  }
 }
 
 .token.selector,
 .token.attr-name,
-.token.string {
-  color: #5e8e01;
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  @if $style == 'dark' {
+    color: #ddcf88;
+  } @else {
+    color: #5e8e01;
+  }
 }
 
 .token.operator,
@@ -28,25 +42,41 @@
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #a67f59;
-  background: hsla(0, 0%, 100%, .5);
+  @if $style == 'dark' {
+    color: #b1c676;
+  } @else {
+    color: #a67f59;
+  }
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: #0070a3;
+  @if $style == 'dark' {
+    color: #91b3ed;
+  } @else {
+    color: #0070a3;
+  }
+}
+
+.token.function {
+  @if $style == 'dark' {
+    color: #c79e6b;
+  } @else {
+    color: #dd4a68;
+  }
 }
 
 .token.regex,
-.token.important {
-  color: #e90;
+.token.important,
+.token.variable {
+  @if $style == 'dark' {
+    color: #e9c062;
+  } @else {
+    color: #e90;
+  }
 }
 
 .token.important {
   font-weight: bold;
-}
-
-.token.entity {
-  cursor: help;
 }

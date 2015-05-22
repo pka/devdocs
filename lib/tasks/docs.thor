@@ -17,7 +17,7 @@ class DocsCLI < Thor
     Docs.all.
       map  { |doc| [doc.to_s.demodulize.underscore, doc] }.
       each { |pair| max_length = pair.first.length if pair.first.length > max_length }.
-      each { |pair| puts "#{pair.first.rjust max_length + 1}: #{pair.second.base_url.sub %r{\Ahttps?://}, ''}" }
+      each { |pair| puts "#{pair.first.rjust max_length + 1}: #{pair.second.base_url.remove %r{\Ahttps?://}}" }
   end
 
   desc 'page <doc> [path] [--verbose] [--debug]', 'Generate a page (no indexing)'
@@ -43,14 +43,15 @@ class DocsCLI < Thor
     invalid_doc(name)
   end
 
-  desc 'generate <doc> [--verbose] [--debug] [--force]', 'Generate a documentation'
+  desc 'generate <doc> [--verbose] [--debug] [--force] [--package]', 'Generate a documentation'
   option :verbose, type: :boolean
   option :debug, type: :boolean
   option :force, type: :boolean
+  option :package, type: :boolean
   def generate(name)
     Docs.install_report :store if options[:verbose]
     Docs.install_report :scraper if options[:debug]
-    Docs.install_report :progress_bar if $stdout.tty?
+    Docs.install_report :progress_bar, :doc if $stdout.tty?
 
     unless options[:force]
       puts <<-TEXT.strip_heredoc
@@ -67,6 +68,10 @@ class DocsCLI < Thor
 
     if Docs.generate(name)
       generate_manifest
+      if options[:package]
+        require 'unix_utils'
+        package_doc(Docs.find(name))
+      end
       puts 'Done'
     else
       puts "Failed!#{' (try running with --debug for more information)' unless options[:debug]}"
@@ -134,6 +139,11 @@ class DocsCLI < Thor
   end
 
   def download_docs(docs)
+    # Don't allow downloaded files to be created as StringIO
+    require 'open-uri'
+    OpenURI::Buffer.send :remove_const, 'StringMax' if OpenURI::Buffer.const_defined?('StringMax')
+    OpenURI::Buffer.const_set 'StringMax', 0
+
     require 'thread'
     length = docs.length
     i = 0
@@ -144,8 +154,8 @@ class DocsCLI < Thor
           status = begin
             download_doc(doc)
             'OK'
-          rescue OpenURI::HTTPError => error
-            "FAILED (#{error.message})"
+          rescue => e
+            "FAILED (#{e.class}: #{e.message})"
           end
           puts "(#{i += 1}/#{length}) #{doc.name} #{status}"
         end

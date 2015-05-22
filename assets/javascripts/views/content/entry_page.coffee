@@ -1,6 +1,6 @@
 class app.views.EntryPage extends app.View
   @className: '_page'
-  @loadingClass: '_page-loading'
+  @errorClass: '_page-error'
 
   @events:
     click: 'onClick'
@@ -25,6 +25,7 @@ class app.views.EntryPage extends app.View
     return
 
   render: (content = '') ->
+    return unless @activated
     @empty()
 
     @subview = new (@subViewClass()) @el, @entry
@@ -35,6 +36,18 @@ class app.views.EntryPage extends app.View
 
     @trigger 'loaded'
     return
+
+  LINKS =
+    home: 'Homepage'
+    code: 'Source code'
+
+  prepareContent: (content) ->
+    return content unless @entry.isIndex() and @entry.doc.links
+
+    links = for link, url of @entry.doc.links
+      """<a href="#{url}" class="_links-link">#{LINKS[link]}</a>"""
+
+    """<p class="_links">#{links.join('')}</p>#{content}"""
 
   empty: ->
     @subview?.deactivate()
@@ -77,13 +90,16 @@ class app.views.EntryPage extends app.View
     return
 
   onSuccess: (response) =>
+    return unless @activated
     @xhr = null
-    @render response
+    @render @prepareContent(response)
     return
 
   onError: =>
     @xhr = null
     @render @tmpl('pageLoadError')
+    @addClass @constructor.errorClass
+    app.appCache?.update()
     return
 
   cache: ->

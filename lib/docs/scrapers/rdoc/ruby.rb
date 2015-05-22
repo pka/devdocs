@@ -1,61 +1,58 @@
 module Docs
   class Ruby < Rdoc
     # Generated with:
-    # find \
-    #   *.c \
-    #   lib \
-    #   ext/bigdecimal \
-    #   ext/date \
-    #   ext/digest \
-    #   ext/json \
-    #   ext/pathname \
-    #   ext/psych \
-    #   ext/readline \
-    #   ext/ripper \
-    #   ext/socket \
-    #   ext/stringio \
-    #   ext/zlib \
-    #   \( -name '*.c' -or -name '*.rb' \) \
-    #   -not -wholename '*sample/*' \
-    # | xargs \
-    #   rdoc --format=darkfish --no-line-numbers --op=rdoc --visibility=public
+    # rdoc \
+    #   --root . \
+    #   --page-dir doc \
+    #   --encoding=UTF-8 \
+    #   --visibility=public \
+    #   --format=darkfish \
+    #   --no-line-numbers \
+    #   --op html .
 
-    self.version = '2.0.0'
+    self.version = '2.2.1'
     self.dir = '/Users/Thibaut/DevDocs/Docs/RDoc/Ruby'
+    self.links = {
+      home: 'https://www.ruby-lang.org/',
+      code: 'https://github.com/ruby/ruby'
+    }
 
     html_filters.replace 'rdoc/entries', 'ruby/entries'
 
     options[:root_title] = 'Ruby Programming Language'
+    options[:title] = ->(filter) { filter.slug == 'globals_rdoc' ? 'Globals' : false }
 
     options[:skip] += %w(
-      fatal.html
-      CompositePublisher.html
+      contributing_rdoc.html
+      contributors_rdoc.html
+      dtrace_probes_rdoc.html
+      maintainers_rdoc.html
+      regexp_rdoc.html
+      standard_library_rdoc.html
+      syntax_rdoc.html
       Data.html
-      E2MM.html
       English.html
-      Exception2MessageMapper.html
-      GServer.html
-      MakeMakefile.html
-      ParallelEach.html
-      Requirement.html
-      SshDirPublisher.html
-      SshFilePublisher.html
-      SshFreshDirPublisher.html
-      Sys.html
-      YAML/DBM.html)
+      Fcntl.html
+      Kconv.html
+      NKF.html
+      OLEProperty.html
+      OptParse.html
+      UnicodeNormalize.html)
 
-    options[:skip_patterns] = [
-      /\AComplex/,
+    options[:skip_patterns] += [
+      /\Alib\//,
+      /\ADEBUGGER__/,
+      /\AException2MessageMapper/,
       /\AJSON\/Ext/,
       /\AGem/,
       /\AHTTP/i,
       /\AIRB/,
-      /\AMiniTest/i,
-      /\ANet\/(?!HTTP)/,
+      /\AMakeMakefile/i,
       /\ANQXML/,
-      /\AOpenSSL/,
       /\AOptionParser\//,
+      /\APrettyPrint/,
       /\APride/,
+      /\AProfiler__/,
       /\APsych\//,
       /\ARacc/,
       /\ARake/,
@@ -67,11 +64,12 @@ module Docs
       /\ASocket\//,
       /\ATest/,
       /\AWEBrick/,
+      /win32/i,
       /\AXML/,
       /\AXMP/]
 
     options[:attribution] = <<-HTML
-      Ruby Core &copy; 1993&ndash;2013 Yukihiro Matsumoto<br>
+      Ruby Core &copy; 1993&ndash;2015 Yukihiro Matsumoto<br>
       Licensed under the Ruby License.<br>
       Ruby Standard Library &copy; contributors<br>
       Licensed under their own licenses.

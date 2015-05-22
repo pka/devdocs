@@ -13,19 +13,22 @@ class app.views.DocPicker extends app.View
   activate: ->
     if super
       @render()
+      @findByTag('input')?.focus()
       app.appCache?.on 'progress', @onAppCacheProgress
+      $.on @el, 'focus', @onFocus, true
     return
 
   deactivate: ->
     if super
       @empty()
       app.appCache?.off 'progress', @onAppCacheProgress
+      $.off @el, 'focus', @onFocus, true
     return
 
   render: ->
     @html @tmpl('sidebarLabel', app.docs.all(), checked: true) +
           @tmpl('sidebarLabel', app.disabledDocs.all()) +
-          @tmpl('sidebarVote') +
+          @tmpl('sidebarPickerNote') +
           @tmpl('sidebarSave')
 
     @refreshElements()
@@ -43,9 +46,11 @@ class app.views.DocPicker extends app.View
   save: ->
     unless @saving
       @saving = true
-      app.settings.setDocs @getSelectedDocs()
-      @saveLink.textContent = if app.appCache then 'Downloading…' else 'Saving…'
-      app.reload()
+      docs = @getSelectedDocs()
+      app.settings.setDocs(docs)
+      @saveLink.textContent = if app.appCache then 'Downloading\u2026' else 'Saving\u2026'
+      disabledDocs = new app.collections.Docs(doc for doc in app.docs.all() when docs.indexOf(doc.slug) is -1)
+      disabledDocs.uninstall -> app.reload()
     return
 
   getSelectedDocs: ->
@@ -58,6 +63,9 @@ class app.views.DocPicker extends app.View
       @save()
     return
 
+  onFocus: (event) ->
+    $.scrollTo event.target.parentNode, null, 'continuous', bottomGap: 2
+
   onEnter: =>
     @save()
     return
@@ -65,5 +73,5 @@ class app.views.DocPicker extends app.View
   onAppCacheProgress: (event) =>
     if event.lengthComputable
       percentage = Math.round event.loaded * 100 / event.total
-      @saveLink.textContent = "Downloading… (#{percentage}%)"
+      @saveLink.textContent = "Downloading\u2026 (#{percentage}%)"
     return

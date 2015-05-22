@@ -3,8 +3,12 @@ module Docs
     self.name = 'Ember.js'
     self.slug = 'ember'
     self.type = 'ember'
-    self.version = '1.2.0'
+    self.version = '1.12.0'
     self.base_url = 'http://emberjs.com/api/'
+    self.links = {
+      home: 'http://emberjs.com/',
+      code: 'https://github.com/emberjs/ember.js'
+    }
 
     html_filters.push 'ember/clean_html', 'ember/entries', 'title'
 
@@ -20,36 +24,28 @@ module Docs
       classes/String.html
       data/classes/DS.html)
 
-    # Empty
-    options[:skip].concat %w(
-      classes/Ember.State.html
-      classes/Ember.StateManager.html
-      data/classes/DS.AdapterPopulatedRecordArray.html
-      data/classes/DS.FilteredRecordArray.html)
-
     # Private
     options[:skip].concat %w(
+      classes/Backburner.html
+      classes/Ember.ComponentTemplateDeprecation.html
+      classes/Ember.ControllerContentModelAliasDeprecation.html
       classes/Ember.Descriptor.html
       classes/Ember.EachProxy.html
       classes/Ember.EventDispatcher.html
-      classes/Ember.Handlebars.Compiler.html
-      classes/Ember.Handlebars.JavaScriptCompiler.html
       classes/Ember.Map.html
       classes/Ember.MapWithDefault.html
       classes/Ember.OrderedSet.html
       classes/Ember.TextSupport.html
-      data/classes/DS.AdapterPopulatedRecordArray.html
-      data/classes/DS.AttributeChange.html
+      classes/HandlebarsCompatibleHelper.html
+      classes/Libraries.html
+      data/classes/DS.ContainerProxy.html
       data/classes/DS.DebugAdapter.html
-      data/classes/DS.RecordArrayManager.html
-      data/classes/DS.RelationshipChange.html
-      data/classes/DS.RelationshipChangeAdd.html
-      data/classes/DS.RelationshipChangeRemove.html)
+      data/classes/DS.RecordArrayManager.html)
 
     options[:skip_patterns] = [/\._/]
 
     options[:attribution] = <<-HTML
-      &copy; 2013 Yehuda Katz, Tom Dale and Ember.js contributors<br>
+      &copy; 2015 Yehuda Katz, Tom Dale and Ember.js contributors<br>
       Licensed under the MIT License.
     HTML
   end

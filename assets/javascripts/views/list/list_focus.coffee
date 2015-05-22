@@ -37,8 +37,10 @@ class app.views.ListFocus extends app.View
       else if next.tagName is 'SPAN' # pagination link
         $.click(next)
         @findNext cursor
-      else # sub-list
+      else if next.tagName is 'DIV' # sub-list
         @findFirst(next) or @findNext(next)
+      else if next.tagName is 'H6' # title
+        @findNext(next)
     else if cursor.parentElement isnt @el
       @findNext cursor.parentElement
 
@@ -58,8 +60,10 @@ class app.views.ListFocus extends app.View
       else if prev.tagName is 'SPAN' # pagination link
         $.click(prev)
         @findPrev cursor
-      else # sub-list
+      else if prev.tagName is 'DIV' # sub-list
         @findLast(prev) or @findPrev(prev)
+      else if prev.tagName is 'H6' # title
+        @findPrev(prev)
     else if cursor.parentElement isnt @el
       @findPrev cursor.parentElement
 
@@ -68,9 +72,9 @@ class app.views.ListFocus extends app.View
 
     if last.tagName is 'A'
       last
-    else if last.tagName is 'SPAN' # pagination link
+    else if last.tagName is 'SPAN' or last.tagName is 'H6' # pagination link or title
       @findPrev last
-    else # sub-list
+    else if last.tagName is 'DIV' # sub-list
       @findLast last
 
   onDown: =>
@@ -104,6 +108,7 @@ class app.views.ListFocus extends app.View
     return
 
   onClick: (event) =>
+    return if event.which isnt 1 or event.metaKey or event.ctrlKey
     if event.target.tagName is 'A'
       @focus event.target
     return

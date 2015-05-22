@@ -1,48 +1,60 @@
 module Docs
   class Less
     class EntriesFilter < Docs::EntriesFilter
-      SKIP_NAMES = ['Parametric Mixins', 'Mixins With Multiple Parameters',
-        'Return Values', 'Unlocking Mixins', 'Media Queries as Variables']
+      def name
+        at_css('h2').content
+      end
 
-      REPLACE_NAMES = {
-        'The @arguments variable'                   => '@arguments',
-        'Advanced arguments and the @rest variable' => '@rest',
-        'The Keyword !important'                    => '!important',
-        'Pattern-matching and Guard expressions'    => 'Pattern-matching',
-        'Advanced Usage of &'                       => '&',
-        'Importing'                                 => '@import',
-        'JavaScript evaluation'                     => 'JavaScript',
-        '% format'                                  => '%'
-      }
-
-      def include_default_entry?
-        false
+      def type
+        root_page? ? 'Language' : nil
       end
 
       def additional_entries
+        root_page? ? language_entries : function_entries
+      end
+
+      def language_entries
         entries = []
-        type = ''
 
-        css('> [id]').each do |node|
-          if node.name == 'h2'
-            type = node.content.strip
-            type.sub! 'The Language', 'Language'
-            type.sub! 'functions', 'Functions'
-            next
-          end
-
-          # Skip function categories (e.g. "Color definition")
-          next if node.name == 'h3' && type != 'Language'
-
+        css('h2').each do |node|
           name = node.content.strip
+          name = 'Rulesets' if name == 'Passing Rulesets to Mixins'
+          entries << [name, node['id']] unless name == 'Overview'
+        end
 
-          next if SKIP_NAMES.include?(name)
+        css('h3[id^="import-options-"]').each do |node|
+          entries << ["@import #{node.content}", node['id']] unless node.content =~ /example/i
+        end
 
-          name = REPLACE_NAMES[name] if REPLACE_NAMES[name]
-          name.gsub!(/ [A-Z]/) { |str| str.downcase! }
+        entries.concat [
+          ['@var',              'variables-feature'],
+          ['@{} interpolation', 'variables-feature-variable-interpolation'],
+          ['url()',             'variables-feature-urls'],
+          ['@property',         'variables-feature-properties'],
+          ['@@var',             'variables-feature-variable-names'],
+          [':extend()',         'extend-feature'],
+          [':extend(all)',      'extend-feature-extend-all-'],
+          ['@arguments',        'mixins-parametric-feature-the-arguments-variable'],
+          ['@rest',             'mixins-parametric-feature-advanced-arguments-and-the-rest-variable'],
+          ['@import',           'import-directives-feature'],
+          ['when',              'mixin-guards-feature'],
+          ['.loop()',           'loops-feature'],
+          ['+:',                'merge-feature'] ]
 
-          entries << ['~', node['id'], type] if name == 'e'
-          entries << [name, node['id'], type]
+        entries
+      end
+
+      def function_entries
+        entries = []
+        type = nil
+
+        css('*').each do |node|
+          if node.name == 'h2'
+            type = node.content
+            type.sub! %r{(.+) Functions}, 'Functions: \1'
+          elsif node.name == 'h3'
+            entries << [node.content, node['id'], type]
+          end
         end
 
         entries

@@ -2,37 +2,31 @@ module Docs
   class Less
     class CleanHtmlFilter < Filter
       def call
-        # Remove everything but language and function reference
-        doc.children = css('#docs', '#reference').children
-
-        # Change headings
-        css('h1', 'h2', 'h3').each do |node|
-          node.name = "h#{node.name.last.to_i + 1}"
-          node['id'] ||= node.content.strip.parameterize
-        end
-
-        # Remove .content div
-        css('.content').each do |node|
-          node.before(node.elements)
+        css('.anchor-target').each do |node|
+          node.parent['id'] = node['id']
           node.remove
         end
 
-        # Remove function index
-        css('#function-reference').each do |node|
-          while node.next.content.strip != 'String functions'
-            node.next.remove
-          end
+        css('.source-link', 'a[id$="md"]', 'br').remove
+
+        css('#functions-overview').each do |node|
+          node.ancestors('.docs-section').remove
         end
 
-        # Remove duplicates
-        [css('[id="unit"]').last, css('[id="color"]').last].each do |node|
-          node.next.remove while %w(h2 h3 h4).exclude?(node.next.name)
-          node.remove
+        css('.docs-content', '.docs-section', '.section-content', 'blockquote').each do |node|
+          node.before(node.children).remove
         end
 
-        # Differentiate function headings
-        css('#function-reference ~ h4').each do |node|
-          node['class'] = 'function'
+        css('.page-header').each do |node|
+          node.before(node.first_element_child).remove
+        end
+
+        css('h1, h2, h3, h4').each do |node|
+          node.name = node.name.sub(/\d/) { |i| [i.to_i + 1, 3].min }
+        end
+
+        css('pre').each do |node|
+          node.content = node.content
         end
 
         doc

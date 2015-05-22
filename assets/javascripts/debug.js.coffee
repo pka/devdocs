@@ -13,15 +13,17 @@ app.init = ->
 
 _start = app.start
 app.start = ->
-  _start.call(app, arguments...)
   console.timeEnd 'Load'
-
-_super = app.Searcher
-_proto = app.Searcher.prototype
+  console.time 'Start'
+  _start.call(app, arguments...)
+  console.timeEnd 'Start'
 
 #
 # Searcher
 #
+
+_super = app.Searcher
+_proto = app.Searcher.prototype
 
 app.Searcher = ->
   _super.apply @, arguments
@@ -34,29 +36,25 @@ app.Searcher = ->
 
   _match = @match.bind(@)
   @match = =>
-    if @matcher
-      console.timeEnd @matcher
-    if @matcher is 'exactMatch'
-      for entries, score in @scoreMap by -1 when entries
-        console.log '' + score + ': ' + entries.map((entry) -> entry.text).join("\n    ")
+    console.timeEnd @matcher.name if @matcher
     _match()
 
   _setupMatcher = @setupMatcher.bind(@)
   @setupMatcher = ->
-    console.time @matcher
+    console.time @matcher.name
     _setupMatcher()
 
   _end = @end.bind(@)
   @end = ->
     console.log "Results: #{@totalResults}"
-    console.groupEnd()
     console.timeEnd 'Total'
+    console.groupEnd()
     _end()
 
   _kill = @kill.bind(@)
   @kill = ->
     if @timeout
-      console.timeEnd @matcher if @matcher
+      console.timeEnd @matcher.name if @matcher
       console.groupEnd()
       console.timeEnd 'Total'
       console.warn 'Killed'
@@ -64,6 +62,7 @@ app.Searcher = ->
 
   return
 
+$.extend(app.Searcher, _super)
 _proto.constructor = app.Searcher
 app.Searcher.prototype = _proto
 

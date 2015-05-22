@@ -8,28 +8,25 @@ class app.AppCache
 
   constructor: ->
     @cache = applicationCache
+    @notifyUpdate = true
     @onUpdateReady() if @cache.status is @cache.UPDATEREADY
 
     $.on @cache, 'progress', @onProgress
     $.on @cache, 'updateready', @onUpdateReady
 
-    @lastCheck = Date.now()
-    $.on window, 'focus', @checkForUpdate
-
   update: ->
+    @notifyUpdate = true
+    try @cache.update() catch
+    return
+
+  updateInBackground: ->
+    @notifyUpdate = false
     try @cache.update() catch
     return
 
   reload: ->
-    @reloading = true
     $.on @cache, 'updateready noupdate error', -> window.location = '/'
-    @update()
-    return
-
-  checkForUpdate: =>
-    if Date.now() - @lastCheck > 86400e3
-      @lastCheck = Date.now()
-      @update()
+    @updateInBackground()
     return
 
   onProgress: (event) =>
@@ -37,6 +34,5 @@ class app.AppCache
     return
 
   onUpdateReady: =>
-    new app.views.Notif 'UpdateReady' unless @reloading
-    @trigger 'updateready'
+    @trigger 'updateready' if @notifyUpdate
     return

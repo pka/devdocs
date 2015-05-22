@@ -9,14 +9,13 @@
   @extend %border-box;
 
   ._booting > & { opacity: 0; }
+  ._noscript > & { display: none; }
 }
 
 ._booting {
   opacity: 0;
-  -webkit-transition: opacity .1s .3s;
-          transition: opacity .1s .3s;
 
-  &._loading { opacity: 1; }
+  &._loading, &._loading:before { opacity: 1; }
 
   &:before {
     content: 'Loading\2026';
@@ -27,8 +26,13 @@
     line-height: 1;
     margin-top: -.75em;
     font-size: 4rem;
-    color: #ccc;
+    color: $loadingText;
     text-align: center;
     letter-spacing: -.125rem;
+    opacity: 0;
+    -webkit-transition: opacity .1s .3s;
+            transition: opacity .1s .3s;
   }
 }
+
+._noscript { opacity: 1; }

@@ -4,14 +4,13 @@ module Docs
       def additional_entries
         entries = []
 
-        css('h2').each do |node|
-          type = node.content.split.first
-          type.gsub! %r{\W}, '' # remove quotation marks
+        css('.toc-container h2').each do |heading|
+          type = heading.content.split.first
 
-          node.parent.css('h3').each do |heading|
-            name = heading.content
-            name.sub! %r{\(.+?\)}, '()'
-            entries << [name, heading['id'], type]
+          heading.parent.css('a').each do |link|
+            name = link.content
+            name = name.remove(/\u{2192}.*/)
+            entries << [name, link['href'].remove('#'), type]
           end
         end
 

@@ -12,13 +12,14 @@ $.id = (id) ->
   document.getElementById(id)
 
 $.hasChild = (parent, el) ->
-  loop
+  return unless parent
+  while el
     return true if el is parent
     return if el is document.body
     el = el.parentElement
 
 $.closestLink = (el, parent = document.body) ->
-  loop
+  while el
     return el if el.tagName is 'A'
     return if el is parent
     el = el.parentElement
@@ -27,18 +28,18 @@ $.closestLink = (el, parent = document.body) ->
 # Events
 #
 
-$.on = (el, event, callback) ->
+$.on = (el, event, callback, useCapture = false) ->
   if event.indexOf(' ') >= 0
     $.on el, name, callback for name in event.split(' ')
   else
-    el.addEventListener(event, callback)
+    el.addEventListener(event, callback, useCapture)
   return
 
-$.off = (el, event, callback) ->
+$.off = (el, event, callback, useCapture = false) ->
   if event.indexOf(' ') >= 0
     $.off el, name, callback for name in event.split(' ')
   else
-    el.removeEventListener(event, callback)
+    el.removeEventListener(event, callback, useCapture)
   return
 
 $.trigger = (el, type, canBubble = true, cancelable = true) ->
@@ -172,7 +173,7 @@ $.scrollTo = (el, parent, position = 'center', options = {}) ->
 
   switch position
     when 'top'
-      parent.scrollTop = top - (options.margin or 20)
+      parent.scrollTop = top - (if options.margin? then options.margin else 20)
     when 'center'
       parent.scrollTop = top - Math.round(parentHeight / 2 - el.offsetHeight / 2)
     when 'continuous'
@@ -260,6 +261,9 @@ ESCAPE_REGEXP = /([.*+?^=!:${}()|\[\]\/\\])/g
 $.escapeRegexp = (string) ->
   string.replace ESCAPE_REGEXP, "\\$1"
 
+$.urlDecode = (string) ->
+  decodeURIComponent string.replace(/\+/g, '%20')
+
 #
 # Miscellaneous
 #
@@ -272,6 +276,12 @@ $.popup = (value) ->
 
 $.isTouchScreen = ->
   typeof ontouchstart isnt 'undefined'
+
+$.isWindows = ->
+  navigator.platform?.indexOf('Win') >= 0
+
+$.isMac = ->
+  navigator.userAgent?.indexOf('Mac') >= 0
 
 HIGHLIGHT_DEFAULTS =
   className: 'highlight'

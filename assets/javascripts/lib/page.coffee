@@ -41,6 +41,7 @@ page.show = (path, state) ->
   currentState = context.state
   page.dispatch(context)
   context.pushState()
+  track()
   context
 
 page.replace = (path, state, skipDispatch, init) ->
@@ -49,6 +50,7 @@ page.replace = (path, state, skipDispatch, init) ->
   currentState = context.state
   page.dispatch(context) unless skipDispatch
   context.replaceState()
+  track() unless init or skipDispatch
   context
 
 page.dispatch = (context) ->
@@ -121,7 +123,7 @@ pathtoRegexp = (path, keys) ->
 
   path = "(#{path.join '|'})" if path instanceof Array
   path = path
-    .replace(/\/\(/g, '(?:/')
+    .replace /\/\(/g, '(?:/'
     .replace /(\/)?(\.)?:(\w+)(?:(\(.*?\)))?(\?)?/g, (_, slash = '', format = '', key, capture, optional) ->
       keys.push name: key, optional: !!optional
       str = if optional then '' else slash
@@ -132,8 +134,8 @@ pathtoRegexp = (path, keys) ->
       str += ')'
       str += optional if optional
       str
-    .replace(/([\/.])/g, '\\$1')
-    .replace(/\*/g, '(.*)')
+    .replace /([\/.])/g, '\\$1'
+    .replace /\*/g, '(.*)'
 
   new RegExp "^#{path}$"
 
@@ -159,3 +161,8 @@ onclick = (event) ->
 
 isSameOrigin = (url) ->
   url.indexOf("#{location.protocol}//#{location.hostname}") is 0
+
+track = ->
+  ga?('send', 'pageview', location.pathname + location.search + location.hash)
+  _gauges?.push(['track'])
+  return

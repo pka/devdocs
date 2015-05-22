@@ -1,7 +1,7 @@
 ._rdoc {
   > .description, > .documentation-section { padding-left: 1rem; }
-  > .description > h2, .section-header { @extend %block-heading; }
-  > .description > h2, .section-header, .method-heading { margin-left: -1rem; }
+  > .description > h2, header > h3, > h2 { @extend %block-heading; }
+  > .description > h2, header > h3, .method-heading { margin-left: -1rem; }
   .description > h1 { font-size: 1rem; }
   .method-description > h2, h3, h4, h5, h6 { font-size: 1em; }
 
@@ -38,8 +38,8 @@
     top: 0;
     left: -1em;
     right: 0;
-    background: rgba(white, .95);
-    box-shadow: 0 1em 1em 1em white;
+    background: rgba($contentBackground, .95);
+    box-shadow: 0 1em 1em 1em $contentBackground;
 
     > pre { margin: 0; }
   }

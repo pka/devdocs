@@ -4,6 +4,7 @@ class app.Router
   @routes: [
     ['*',              'before'  ]
     ['/',              'root'    ]
+    ['/offline',       'offline' ]
     ['/about',         'about'   ]
     ['/news',          'news'    ]
     ['/help',          'help'    ]
@@ -40,7 +41,7 @@ class app.Router
   doc: (context, next) ->
     if doc = app.docs.findBy('slug', context.params.doc) or app.disabledDocs.findBy('slug', context.params.doc)
       context.doc = doc
-      context.entry = doc.indexEntry()
+      context.entry = doc.toEntry()
       @triggerRoute 'entry'
     else
       next()
@@ -69,7 +70,14 @@ class app.Router
     return
 
   root: ->
-    @triggerRoute 'root'
+    if app.isSingleDoc()
+      setTimeout (-> window.location = '/'), 0
+    else
+      @triggerRoute 'root'
+    return
+
+  offline: ->
+    @triggerRoute 'offline'
     return
 
   about: (context) ->

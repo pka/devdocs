@@ -1,5 +1,5 @@
 app.config =
-  default_docs: ['postgis', 'postgresql', 'pyqt', 'python', 'qgispyapi']
+  default_docs: <%= App.default_docs.to_json %>
   docs_host: '<%= App.docs_host %>'
   env: '<%= App.environment %>'
   history_cache_size: 10
@@ -8,3 +8,4 @@ app.config =
   production_host: 'geoapis.sourcepole.com'
   search_param: 'q'
   sentry_dsn: '<%= App.sentry_dsn %>'
+  version: '<%= Time.now.to_i %>'

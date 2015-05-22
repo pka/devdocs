@@ -6,15 +6,16 @@ class app.views.Sidebar extends app.View
     click: 'onClick'
 
   @shortcuts:
+    altR: 'onAltR'
     escape: 'onEscape'
 
   init: ->
-    @addSubview @hover  = new app.views.SidebarHover @el unless $.isTouchScreen()
+    @addSubview @hover  = new app.views.SidebarHover @el unless app.isMobile() or $.isTouchScreen()
     @addSubview @search = new app.views.Search
 
     @search
-      .on('searching', @showResults)
-      .on('clear', @showDocList)
+      .on 'searching', @showResults
+      .on 'clear', @showDocList
 
     @results = new app.views.Results @search
     @docList = new app.views.DocList
@@ -37,7 +38,9 @@ class app.views.Sidebar extends app.View
 
   showDocList: (reset) =>
     @show @docList
-    @docList.reset() if reset is true
+    if reset is true
+      @docList.reset(revealCurrent: true)
+      @search.reset()
     return
 
   showDocPicker: =>
@@ -47,6 +50,9 @@ class app.views.Sidebar extends app.View
   showResults: =>
     @show @results
     return
+
+  reset: ->
+    @showDocList true
 
   saveScrollPosition: ->
     if @view is @docList
@@ -72,7 +78,10 @@ class app.views.Sidebar extends app.View
   onClick: (event) =>
     if event.target.hasAttribute? 'data-reset-list'
       $.stopEvent(event)
-      @showDocList true
+      @reset()
+    else if event.target.hasAttribute? 'data-light'
+      $.stopEvent(event)
+      app.document.toggleLight()
     return
 
   onGlobalClick: (event) =>
@@ -83,7 +92,11 @@ class app.views.Sidebar extends app.View
       @showDocList() unless $.hasChild @el, event.target
     return
 
+  onAltR: =>
+    @reset()
+    return
+
   onEscape: =>
-    @showDocList true
+    @reset()
     @scrollToTop()
     return

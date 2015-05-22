@@ -121,10 +121,17 @@ class DocsFileStoreTest < MiniTest::Spec
     end
   end
 
+  describe "#size" do
+    it "returns the file's size" do
+      write 'file', 'content'
+      assert_equal File.size(expand_path('file')), store.size('file')
+    end
+  end
+
   describe "#each" do
     let :paths do
       paths = []
-      store.each { |path| paths << path.sub(tmp_path, '') }
+      store.each { |path| paths << path.remove(tmp_path) }
       paths
     end
 

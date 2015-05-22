@@ -3,6 +3,7 @@ module Docs
     class EntriesFilter < Docs::EntriesFilter
       TYPE_BY_NAME_STARTS_WITH = {
         'ArrayObject'     => 'SPL',
+        'Collectable'     => 'pthreads',
         'Cond'            => 'pthreads',
         'CURL'            => 'cURL',
         'Date'            => 'Date/Time',
@@ -12,6 +13,7 @@ module Docs
         'Http'            => 'HTTP',
         'Mutex'           => 'pthreads',
         'php_user_filter' => 'Stream',
+        'Pool'            => 'pthreads',
         'Reflector'       => 'Reflection',
         'Soap'            => 'SOAP',
         'SplFile'         => 'SPL/File',
@@ -25,8 +27,8 @@ module Docs
         'XsltProcessor'   => 'XSLT',
         'ZipArchive'      => 'Zip' }
 
-      %w(APC AMQP Directory DOM Gearman Gmagick Imagick mysqli OAuth PDO
-         Reflection Session SimpleXML Solr Sphinx SQLite3 Varnish XSLT Yaf).each do |str|
+      %w(APC Directory DOM Event Gearman Gmagick Imagick mysqli OAuth PDO Reflection
+        Session SimpleXML Solr Sphinx SQLite3 Varnish XSLT Yaf).each do |str|
         TYPE_BY_NAME_STARTS_WITH[str] = str
       end
 
@@ -81,7 +83,7 @@ module Docs
       def get_name
         return 'IntlException' if slug == 'class.intlexception'
         name = css('> .sect1 > .title', 'h1', 'h2').first.content
-        name.sub! 'The ', ''
+        name.remove! 'The '
         name.sub! ' class', ' (class)'
         name.sub! ' interface', ' (interface)'
         name
@@ -90,7 +92,7 @@ module Docs
       def get_type
         type = at_css('.up').content.strip
         type = 'SPL/Iterators' if type.end_with? 'Iterator'
-        type.sub! ' Functions', ''
+        type.remove! ' Functions'
 
         TYPE_BY_NAME_STARTS_WITH.each_pair do |key, value|
           break type = value if name.start_with?(key)

@@ -13,14 +13,16 @@ class app.views.Results extends app.View
 
   init: ->
     @addSubview @listSelect = new app.views.ListSelect @el
-    @addSubview @listFocus  = new app.views.ListFocus @el unless $.isTouchScreen()
+    @addSubview @listFocus  = new app.views.ListFocus @el unless app.isMobile()
 
     @search
-      .on('results', @onResults)
-      .on('clear', @onClear)
+      .on 'results', @onResults
+      .on 'noresults', @onNoResults
+      .on 'clear', @onClear
     return
 
   onResults: (entries, flags) =>
+    @listFocus?.blur() if flags.initialResults
     @empty() if flags.initialResults
     @append @tmpl('sidebarResult', entries)
 
@@ -28,16 +30,20 @@ class app.views.Results extends app.View
       if flags.urlSearch then @openFirst() else @focusFirst()
     return
 
+  onNoResults: =>
+    @html @tmpl('sidebarNoResults')
+    return
+
   onClear: =>
     @empty()
     return
 
   focusFirst: ->
-    @listFocus?.focus @el.firstChild
+    @listFocus?.focus @el.firstElementChild
     return
 
   openFirst: ->
-    @el.firstChild?.click()
+    @el.firstElementChild?.click()
     return
 
   afterRoute: (route, context) =>

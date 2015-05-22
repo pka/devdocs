@@ -1,19 +1,40 @@
 module Docs
   class Angular < UrlScraper
-    # This scraper is currently broken; the problem being that Angular's
-    # documentation isn't available as static pages. I will try to restore it
-    # once Angular 1.2.0 is released.
-    #
-    # In the past it used static-ng-doc by Sal Lara (github.com/natchiketa/static-ng-doc)
-    # to scrape the doc's HTML partials (e.g. docs.angularjs.org/partials/api/ng.html).
-    #
-    # If you want to help this is what I need: a static page with links to each
-    # HTML partial. Or better yet, a static version of Angular's documentation.
+    include StubRootPage
 
     self.name = 'Angular.js'
     self.slug = 'angular'
     self.type = 'angular'
-    self.version = '1.0.7'
-    self.base_url = ''
+    self.version = '1.3.14'
+    self.base_url = "https://code.angularjs.org/#{version}/docs/partials/api/"
+
+    html_filters.push 'angular/clean_html', 'angular/entries', 'title'
+    text_filters.push 'angular/clean_urls'
+
+    options[:title] = false
+    options[:root_title] = 'Angular.js'
+
+    options[:fix_urls] = ->(url) do
+      url.sub! '/partials/api/api/', '/partials/api/'
+      url.sub! %r{/api/(.+?)/api/}, '/api/'
+      url.sub! %r{/partials/api/(.+?)(?<!\.html)(?:\z|(#.*))}, '/partials/api/\1.html\2'
+      url
+    end
+
+    options[:skip] = %w(ng.html)
+
+    options[:attribution] = <<-HTML
+      &copy; 2010&ndash;2015 Google, Inc.<br>
+      Licensed under the Creative Commons Attribution License 3.0.
+    HTML
+
+    private
+
+    def root_page_body
+      require 'capybara'
+      Capybara.current_driver = :selenium
+      Capybara.visit("https://code.angularjs.org/#{self.class.version}/docs/api")
+      Capybara.find('.side-navigation')['innerHTML']
+    end
   end
 end

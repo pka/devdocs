@@ -4,15 +4,20 @@ class app.views.DocList extends app.View
   @events:
     open:  'onOpen'
     close: 'onClose'
+    click: 'onClick'
 
   @routes:
     after: 'afterRoute'
+
+  @elements:
+    disabledTitle: '._list-title'
+    disabledList: '._disabled-list'
 
   init: ->
     @lists = {}
 
     @addSubview @listSelect = new app.views.ListSelect @el
-    @addSubview @listFocus  = new app.views.ListFocus @el unless $.isTouchScreen()
+    @addSubview @listFocus  = new app.views.ListFocus @el unless app.isMobile()
     @addSubview @listFold   = new app.views.ListFold @el
 
     app.on 'ready', @render
@@ -31,18 +36,40 @@ class app.views.DocList extends app.View
 
   render: =>
     @html @tmpl('sidebarDoc', app.docs.all())
-    unless app.isSingleDoc() or app.settings.hasDocs()
-      @append @tmpl('sidebarDoc', app.disabledDocs.all(), disabled: true)
+    @renderDisabled() unless app.isSingleDoc() or app.disabledDocs.size() is 0
     return
 
-  reset: ->
+  renderDisabled: ->
+    @append @tmpl('sidebarDisabled', count: app.disabledDocs.size())
+    @refreshElements()
+    @renderDisabledList()
+    return
+
+  renderDisabledList: ->
+    if (hidden = app.settings.get 'hideDisabled') is true
+      @removeDisabledList()
+    else
+      app.settings.set 'hideDisabled', false unless hidden is false
+      @appendDisabledList()
+    return
+
+  appendDisabledList: ->
+    @append @tmpl('sidebarDisabledList', docs: app.disabledDocs.all())
+    @disabledTitle.classList.add('open-title')
+    @refreshElements()
+    return
+
+  removeDisabledList: ->
+    $.remove @disabledList if @disabledList
+    @disabledTitle.classList.remove('open-title')
+    @refreshElements()
+    return
+
+  reset: (options = {}) ->
     @listSelect.deselect()
     @listFocus?.blur()
     @listFold.reset()
-
-    if model = app.router.context.type or app.router.context.entry
-      @reveal model
-      @select model
+    @revealCurrent() if options.revealCurrent
     return
 
   onOpen: (event) =>
@@ -77,6 +104,12 @@ class app.views.DocList extends app.View
     @scrollTo model
     return
 
+  revealCurrent: ->
+    if model = app.router.context.type or app.router.context.entry
+      @reveal model
+      @select model
+    return
+
   openDoc: (doc) ->
     @listFold.open @find("[data-slug='#{doc.slug}']")
     return
@@ -90,12 +123,36 @@ class app.views.DocList extends app.View
     return
 
   scrollTo: (model) ->
-    $.scrollTo @find("a[href='#{model.fullPath()}']")
+    $.scrollTo @find("a[href='#{model.fullPath()}']"), null, 'top', margin: 0
+    return
+
+  toggleDisabled: ->
+    if @disabledTitle.classList.contains('open-title')
+      @removeDisabledList()
+      app.settings.set 'hideDisabled', true
+    else
+      @appendDisabledList()
+      app.settings.set 'hideDisabled', false
+    return
+
+  onClick: (event) =>
+    if @disabledTitle and $.hasChild(@disabledTitle, event.target)
+      $.stopEvent(event)
+      @toggleDisabled()
+    else if slug = event.target.getAttribute('data-enable')
+      $.stopEvent(event)
+      doc = app.disabledDocs.findBy('slug', slug)
+      app.enableDoc(doc, @onEnable, @onEnable)
+    return
+
+  onEnable: =>
+    @reset()
+    @render()
     return
 
   afterRoute: (route, context) =>
     if context.init
-      @reset()
+      @reset revealCurrent: true
     else
       @select context.type or context.entry
     return

@@ -43,8 +43,13 @@ class ManifestTest < MiniTest::Spec
       'index_path'
     end
 
+    let :db_path do
+      'db_path'
+    end
+
     before do
       stub(doc).index_path { index_path }
+      stub(doc).db_path { db_path }
     end
 
     it "returns an array" do
@@ -52,9 +57,10 @@ class ManifestTest < MiniTest::Spec
       assert_instance_of Array, manifest.as_json
     end
 
-    context "when the doc has an index" do
+    context "when the doc has an index and a db" do
       before do
         stub(store).exist?(index_path) { true }
+        stub(store).exist?(db_path) { true }
       end
 
       it "includes the doc's JSON representation" do
@@ -63,16 +69,34 @@ class ManifestTest < MiniTest::Spec
         assert_empty doc.as_json.keys - json.first.keys
       end
 
-      it "adds an :mtime attribute" do
-        mtime = Time.now - 1
-        stub(store).mtime(index_path) { mtime }
-        assert_equal mtime.to_i, manifest.as_json.first[:mtime]
+      it "adds an :mtime attribute with the greatest of the index and db files' mtime" do
+        mtime_index = Time.now - 1
+        mtime_db = Time.now - 2
+        stub(store).mtime(index_path) { mtime_index }
+        stub(store).mtime(db_path) { mtime_db }
+        assert_equal mtime_index.to_i, manifest.as_json.first[:mtime]
+        mtime_index, mtime_db = mtime_db, mtime_index
+        assert_equal mtime_db.to_i, manifest.as_json.first[:mtime]
+      end
+
+      it "adds a :db_size attribute" do
+        stub(store).size(db_path) { 42 }
+        assert_equal 42, manifest.as_json.first[:db_size]
       end
     end
 
     context "when the doc doesn't have an index" do
       it "doesn't include the doc" do
+        stub(store).exist?(db_path) { true }
         stub(store).exist?(index_path) { false }
+        assert_empty manifest.as_json
+      end
+    end
+
+    context "when the doc doesn't have a db" do
+      it "doesn't include the doc" do
+        stub(store).exist?(index_path) { true }
+        stub(store).exist?(db_path) { false }
         assert_empty manifest.as_json
       end
     end

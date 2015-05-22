@@ -1,5 +1,3 @@
-require 'html/pipeline'
-
 module Docs
   class Filter < ::HTML::Pipeline::Filter
     def css(*args)
@@ -20,6 +18,10 @@ module Docs
 
     def base_url
       context[:base_url]
+    end
+
+    def links
+      context[:links]
     end
 
     def current_url
@@ -43,7 +45,7 @@ module Docs
     end
 
     def slug
-      @slug ||= subpath.sub(/\A\//, '').sub(/\.html\z/, '')
+      @slug ||= subpath.sub(/\A\//, '').remove(/\.html\z/)
     end
 
     def root_page?

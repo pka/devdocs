@@ -12,6 +12,7 @@ class app.views.Content extends app.View
     pageDown: 'scrollPageDown'
     home:     'scrollToTop'
     end:      'scrollToBottom'
+    altF:     'onAltF'
 
   @routes:
     before: 'beforeRoute'
@@ -22,22 +23,24 @@ class app.views.Content extends app.View
     @scrollMap = {}
     @scrollStack = []
 
-    @rootPage   = new app.views.RootPage
-    @staticPage = new app.views.StaticPage
-    @typePage   = new app.views.TypePage
-    @entryPage  = new app.views.EntryPage
+    @rootPage    = new app.views.RootPage
+    @staticPage  = new app.views.StaticPage
+    @offlinePage = new app.views.OfflinePage
+    @typePage    = new app.views.TypePage
+    @entryPage   = new app.views.EntryPage
 
     @entryPage
-      .on('loading', @onEntryLoading)
-      .on('loaded', @onEntryLoaded)
+      .on 'loading', @onEntryLoading
+      .on 'loaded', @onEntryLoaded
 
     app
-      .on('ready', @onReady)
-      .on('bootError', @onBootError)
+      .on 'ready', @onReady
+      .on 'bootError', @onBootError
 
     return
 
   show: (view) ->
+    @hideLoading()
     unless view is @view
       @view?.deactivate()
       @html @view = view
@@ -136,6 +139,8 @@ class app.views.Content extends app.View
         @show @entryPage
       when 'type'
         @show @typePage
+      when 'offline'
+        @show @offlinePage
       else
         @show @staticPage
 
@@ -150,8 +155,15 @@ class app.views.Content extends app.View
       $.popup(link)
     return
 
+  onAltF: (event) =>
+    unless document.activeElement and $.hasChild @el, document.activeElement
+      @findByTag('a')?.focus()
+      $.stopEvent(event)
+
   findTargetByHash: (hash) ->
-    try $.id decodeURIComponent(hash) catch
+    el = try $.id decodeURIComponent(hash) catch
+    el or= try $.id(hash) catch
+    el
 
   isExternalUrl: (url) ->
-    url?[0..4] in ['http:', 'https:']
+    url?[0..5] in ['http:/', 'https:']
