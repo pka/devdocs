@@ -2,7 +2,7 @@ module Docs
   class Pyqt < FileScraper
     self.name = 'PyQt'
     self.type = 'pyqt'
-    self.version = '4.9.1'
+    self.version = '4.10.14'
     #apt-get install python-qt4-doc
     self.dir = '/usr/share/doc/python-qt4-doc/html'
     self.base_url = 'http://pyqt.sourceforge.net/Docs/PyQt4'
