@@ -50,4 +50,19 @@
   ._header, ._list { width: <%= app_size %>; }
   ._list-hover.clone { min-width: <%= app_size %>; }
   ._notice, ._path, ._resizer { left: <%= app_size %>; }
+<% if App.production? -%>
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//analytics.sourcepole.ch/analytics/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 6]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//analytics.sourcepole.ch/analytics/piwik.php?idsite=6" style="border:0;" alt="" /></p></noscript>
+<% end -%>
 </style>

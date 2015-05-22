@@ -49,3 +49,6 @@ if ENV['SELENIUM'] == '1'
   gem 'capybara'
   gem 'selenium-webdriver'
 end
+
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
