@@ -66,7 +66,6 @@
 ._icon-python2:before       { background-position: 0 -3rem; }
 ._icon-git:before           { background-position: -1rem -3rem; }
 ._icon-redis:before         { background-position: -2rem -3rem; }
-._icon-pyqt:before          { background-position: -4rem -6rem; }
 ._icon-postgresql:before    { background-position: -3rem -3rem; }
 ._icon-d3:before            { background-position: -4rem -3rem; }
 ._icon-knockout:before      { background-position: -5rem -3rem; }
@@ -171,5 +170,6 @@
 ._icon-homebrew:before      { background-position: 0 -3rem; @extend %doc-icon-2; }
 ._icon-jekyll:before        { background-position: -1rem -3rem; @extend %doc-icon-2; }
 ._icon-babel:before         { background-position: -2rem -3rem; @extend %doc-icon-2; }
-._icon-postgis:before       { background-position: 0 -7rem; }
-._icon-qgispyapi:before     { background-position: -1rem -7rem; }
+._icon-pyqt:before          { background-position: 0 -4rem; @extend %doc-icon-2; }
+._icon-postgis:before       { background-position: -1rem -4rem; @extend %doc-icon-2; }
+._icon-qgispyapi:before     { background-position: -2rem -4rem; @extend %doc-icon-2; }

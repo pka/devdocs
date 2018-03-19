@@ -3,11 +3,11 @@ module Docs
     class EntriesFilter < Docs::EntriesFilter
 
       def get_name
-        entry = at_css('div.refentry')
+        # <div class="refentry"><h1 name="ST_Collect">ST_Collect</h1>
+        entry = at_css('div.refentry h1')
         if entry
-          entry['title']
+          entry['name']
         else
-          #We add h2 subchapters as additional entries
           nil
         end
       end
@@ -26,7 +26,8 @@ module Docs
         if name.nil?
           css('div.sect1 h2,h3').each do |title|
             chapter = title.content.sub(/^[\d.]+ /, '')
-            unless chapter == 'Raster Processing'
+            unless chapter == 'Raster Processing' or
+                   ['using_postgis_dbmanagement', 'using_raster_dataman', 'address_standardizer'].include?(slug)
               entries << [chapter, title['id'], chapter]
             end
           end
