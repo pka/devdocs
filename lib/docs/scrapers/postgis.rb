@@ -2,9 +2,9 @@ module Docs
   class Postgis < FileScraper
     self.name = 'PostGIS'
     self.type = 'postgis'
-    self.version = '2.1.7'
+    self.version = '2.4.3'
     self.dir = '/home/builder/geoapis/docs/postgis'
-    self.base_url = 'http://postgis.net/docs/manual-2.1'
+    self.base_url = 'http://postgis.net/docs/manual-2.4'
     self.root_path = 'index.html'
 
     html_filters.push 'postgis/clean_nav', 'postgis/clean_html', 'postgis/entries'
@@ -13,13 +13,11 @@ module Docs
       /postgis_introduction.html
       /postgis_installation.html
       /PostGIS_FAQ.html
-      /using_postgis_dbmanagement.html
-      /using_raster_dataman.html
       /ch06.html
       /performance_tips.html
       /RT_FAQ.html
       /PostGIS_Special_Functions_Index.html
-      /ch14.html
+      /ch15.html
       /release_notes.html)
 
     options[:attribution] = <<-HTML

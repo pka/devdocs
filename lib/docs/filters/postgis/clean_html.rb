@@ -6,13 +6,16 @@ module Docs
         css('meta').remove
         css('link').remove
 
-        #Convert title to h1
-        css('title').each do |node|
+        #Convert refentry link to h1
+        # <div class="refentry"><a name="ST_SRID" id="ST_SRID"></a>
+        css('div.refentry > a').each do |node|
           node.name = 'h1'
+          node.content = node['name']
         end
         css('div.chapter > div > div > div > h2').remove
 
         # Remove title 'Name' and append chapter link
+        # <div class="refnamediv"><h2>Name</h2>
         css('div.refnamediv > h2').each do |node|
           if node.content == 'Name' && descr = node.parent.at_css('> p')
             descr.content = descr.content.sub(/^\w+ — /, '')
