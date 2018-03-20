@@ -6,7 +6,7 @@ module Docs
       end
 
       def get_type
-        result[:module]
+        result[:module] || 'QtCore'
       end
 
       def additional_entries
@@ -16,7 +16,9 @@ module Docs
           a = node.at_css('a')
           #Remove return type and arguments
           method = node.content.gsub(/^[\w-]* /, '').gsub(/^\(.+\) /, '').gsub(/ \(.+$/, '')
-          entries << [method, a['name']]
+          unless method =~ /^\(/ # TODO: support macros like qDebug (str)
+            entries << [method, a['name']]
+          end
         end
         entries
       end

@@ -16,7 +16,11 @@ module Docs
           inner_class = classname.include?('.')
           unless inner_class
             pre = Nokogiri::XML::Node.new 'pre', doc
-            pre.content = "from PyQt4.#{result[:module]} import #{classname}"
+            if classname != result[:module]
+              pre.content = "from PyQt4.#{result[:module]} import #{classname}"
+            else
+              pre.content = "from PyQt4 import #{classname}"
+            end
             newnode.add_next_sibling(pre)
           end
         end
@@ -37,7 +41,13 @@ module Docs
 
       def extract_module
         if node = at_css('h1 a')
+          # <h1 align="center">QIODevice Class Reference<br /><sup><sup>[<a href="qtcore.html">QtCore</a>module]</sup></sup></h1>
           result[:module] = node.content
+        elsif node = at_css('h1')
+          # <h1 align="center">QtCore Module<br /></h1>
+          if node.content =~ /Module$/
+            result[:module] = node.content.sub(/ Module/, '')
+          end
         end
       end
     end
