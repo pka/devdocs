@@ -1,5 +1,10 @@
 ._gdal {
 
+  h2 {
+    margin-left: -1rem;
+    @extend %block-heading;
+  }
+
   .member {
     margin-left: -1rem;
     @extend %note, %note-blue;
@@ -7,5 +12,11 @@
 
   .fragment {
     font-family: $monoFont;
+  }
+
+  div.epydoc { @extend %note, %note-blue; }
+
+  table.details {
+    border-style: none;
   }
 }
